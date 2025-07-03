@@ -8,6 +8,7 @@ const path_1 = __importDefault(require("path"));
 const method_override_1 = __importDefault(require("method-override"));
 const express_session_1 = __importDefault(require("express-session"));
 const promise_1 = __importDefault(require("mysql2/promise"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 async function initializeApp() {
     const db = await promise_1.default.createConnection({
         host: 'localhost', // MySQLサーバーのホスト名
@@ -21,6 +22,7 @@ async function initializeApp() {
     app.use(express_1.default.urlencoded({ extended: true }));
     app.use((0, method_override_1.default)('_method'));
     app.use(express_1.default.static(path_1.default.join(__dirname, 'dist/public')));
+    app.use(express_1.default.urlencoded({ extended: true })); // 追加: URLエンコードされたデータのパース
     app.use((0, express_session_1.default)({
         secret: 'your-secret-key', // セッションの暗号化キー
         resave: false,
@@ -41,6 +43,31 @@ async function initializeApp() {
         const { todo, dueDate, priority } = req.body;
         await db.execute('INSERT INTO todos (todo, dueDate, priority) VALUES (?, ?, ?)', [todo, dueDate, priority]);
         res.redirect('/home');
+    });
+    app.get('/register', (req, res) => {
+        res.render('register');
+    });
+    app.post('/register', async (req, res) => {
+        const { username, password, email } = req.body;
+        const hashedPassword = await bcrypt_1.default.hash(password, 10);
+        await db.execute('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', [username, hashedPassword, email]);
+        res.redirect('/login');
+    });
+    app.get('/login', (req, res) => {
+        res.render('login');
+    });
+    app.post('/login', async (req, res) => {
+        const { username, password } = req.body;
+        const [rows] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
+        if (rows.length > 0) {
+            const user = rows[0];
+            const isPasswordValid = await bcrypt_1.default.compare(password, user.password);
+            if (isPasswordValid) {
+                req.session.userId = user.id;
+                return res.redirect('/home');
+            }
+        }
+        res.redirect('/login');
     });
     app.put('/update/:id', async (req, res) => {
         const todoId = req.params.id;
