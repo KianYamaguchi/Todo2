@@ -27,23 +27,24 @@ body {
 
 h1 {
     font-size: 3rem;
-    color: #ffffff;
-    text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #000000;
+    color: #ffffff; /* 明るい白色 */
+    text-shadow: 0 0 10px #ff9a9e, 0 0 20px #fad0c4, 0 0 30px #fbc2eb; /* 光るような効果を追加 */
     margin-bottom: 30px;
-    animation: float 3s ease-in-out infinite, glow 1.5s alternate infinite;
+    animation: glow 2s alternate infinite; /* 光るアニメーション */
     font-family: 'Pacifico', cursive;
     border: 2px solid #ffffff;
     padding: 10px 20px;
     border-radius: 10px;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(128, 70, 118, 0.5); /* 背景を半透明にして目立たせる */
 }
 
+/* 光るアニメーション */
 @keyframes glow {
     0% {
-        text-shadow: 2px 2px 4px rgba(255, 111, 97, 0.5), 0 0 10px #fad0c4;
+        text-shadow: 0 0 10px #ff9a9e, 0 0 20px #fad0c4;
     }
     100% {
-        text-shadow: 2px 2px 8px rgba(255, 111, 97, 0.8), 0 0 20px #fbc2eb;
+        text-shadow: 0 0 20px #fbc2eb, 0 0 40px #a18cd1;
     }
 }
 
@@ -131,7 +132,7 @@ form button:hover {
     padding: 15px 20px;
     margin-bottom: 15px;
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(35, 142, 192, 0.1);
     width: 100%;
     max-width: 500px;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -230,4 +231,109 @@ form button:hover {
     top: 85%;
     left: 40%;
     animation-duration: 7s, 9s;
+}
+
+/* 全体のレイアウト */
+
+
+/* 上部のタスクバー */
+.sidebar {
+    width: 100%; /* 横幅を全体に広げる */
+    background-color: transparent; /* 背景を透明に */
+    color: #333333; /* テキストを暗めに */
+    padding: 10px 20px;
+    box-shadow: none; /* ボックスシャドウを削除 */
+    display: flex;
+    justify-content: space-between; /* 左右に要素を配置 */
+    align-items: center;
+    position: relative;
+    z-index: 10; /* タスクバーを前面に表示 */
+}
+
+/* タスクバー内のメニュー */
+.sidebar h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: #333333;
+}
+
+.sidebar ul {
+    list-style: none;
+    display: flex;
+    gap: 15px; /* メニュー間のスペース */
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 0;
+}
+
+.sidebar ul li a,
+.sidebar ul li button {
+    text-decoration: none;
+    color: #333333;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 10px 15px;
+    transition: background 0.3s ease, color 0.3s ease;
+    border-radius: 5px;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li button:hover {
+    background-color: #f6d365;
+    color: #ffffff;
+}
+
+/* メインコンテンツ */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    background-color: transparent; /* 背景を透明に */
+    overflow-y: auto;
+}
+
+.main-content h1 {
+    margin-bottom: 20px;
+    color: #333333;
+}
+
+/* タスクアイテム */
+.todo-item {
+    background: rgba(255, 255, 255, 0.8); /* 半透明の背景 */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 軽い影を残す */
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.todo-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.sort-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.sort-buttons button {
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #f6d365, #fda085);
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.sort-buttons button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }

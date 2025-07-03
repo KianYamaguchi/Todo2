@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt';
 declare module 'express-session' {
     interface SessionData {
         userId: string; // userIdプロパティを追加
+        username: string; // usernameプロパティを追加
     }
 }
 
@@ -55,7 +56,9 @@ async function initializeApp() {
 
     app.post('/add', async (req, res) => {
         const { todo, dueDate, priority } = req.body;
-        await db.execute('INSERT INTO todos (todo, dueDate, priority) VALUES (?, ?, ?)', [todo, dueDate, priority]);
+        const userId = req.session.userId;
+       
+        await db.execute('INSERT INTO todos (todo, dueDate, priority, userId) VALUES (?, ?, ?, ?)', [todo, dueDate, priority, userId]);
         res.redirect('/home');
     });
 
@@ -81,7 +84,8 @@ async function initializeApp() {
             const user = rows[0];
             const isPasswordValid = await bcrypt.compare(password, user.password);
             if (isPasswordValid) {
-                req.session.userId = user.id;
+                req.session.userId = user.id; // ユーザーIDをセッションに保存
+                req.session.username = user.username; // ユーザー名をセッションに保存
                 return res.redirect('/home');
             }
         }
@@ -90,25 +94,53 @@ async function initializeApp() {
 
     app.put('/update/:id', async (req, res) => {
         const todoId = req.params.id;
+        const userId = req.session.userId; // ログイン中のユーザーIDを取得
         const { todo, dueDate, priority } = req.body;
-        await db.execute('UPDATE todos SET todo = ?, dueDate = ?, priority = ? WHERE id = ?', [todo, dueDate, priority, todoId]);
+        await db.execute('UPDATE todos SET todo = ?, dueDate = ?, priority = ? WHERE id = ? AND userId = ?', [todo, dueDate, priority, todoId, userId]);
         res.redirect('/home');
     });
 
     app.get('/home', async (req, res) => {
-        const [rows] = await db.execute('SELECT * FROM todos');
-        console.log('Rendering home page');
-        res.render('home', { todos: rows });
+        const userId = req.session.userId; // ログイン中のユーザーIDを取得
+        const username = req.session.username;
+         const sort = req.query.sort; // クエリパラメータから並び替え条件を取得
+
+         
+    if (!userId) {
+        return res.redirect('/login');
+    }
+
+    let query = 'SELECT * FROM todos WHERE userId = ?';
+    if (sort === 'priority') {
+        query += ' ORDER BY priority DESC'; // 重要度順（高い順）
+    } else if (sort === 'dueDate') {
+        query += ' ORDER BY dueDate ASC'; // 期限順（早い順）
+    }
+    const [rows] = await db.execute(query, [userId]);
+    console.log('Rendering home page');
+    res.render('home', { todos: rows, username });
     });
+
+
     app.post('/details/:id', async (req, res) => {
     const todoId = req.params.id;
-    const [rows]: any = await db.query('SELECT * FROM todos WHERE id = ?', [todoId]);
+    const userId = req.session.userId; // ログイン中のユーザーIDを取得
+    const [rows]: any = await db.query('SELECT * FROM todos WHERE id = ? AND userId = ?', [todoId, userId]);
     if (rows.length > 0) {
         res.render('details', { todo: rows[0] });
     } else {
         res.status(404).send('Todo not found');
     }
 });
+    app.get('/logout', (req, res) => {
+        req.session.destroy(err => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('ログアウト中にエラーが発生しました');
+            }
+            res.redirect('/login'); // ログアウト後にログインページへリダイレクト
+        });
+    });
     app.listen(3000, () => {
         console.log('Server is running on port 3000');
     });

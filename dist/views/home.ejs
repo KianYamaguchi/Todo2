@@ -8,26 +8,57 @@
 </head>
 
 <body>
-    <h1>TODOアプリ for ts&mysql</h1>
-    <form action="/add" method="POST">
-        <input type="text" name="todo" placeholder="タスクの追加" required>
-        <input type="date" name="dueDate" placeholder="期限" required>
-        <select name="priority" required>
-            <option value="low">重要度：low</option>
-            <option value="medium">重要度：medium</option>
-            <option value="high">重要度：high</option>
-        </select>
-        <button type="submit">Todoを追加する</button>
-    </form>
-    <% for(let todo of todos) { %>
-        <div class="todo-item">
-            <p><%= todo.todo %></p>
-            <p>期限: <%= todo.dueDate ? String(todo.dueDate).slice(0, 10).replace(/-/g, '') : '未設定' %></p>
-            
-            <form method="POST" action="/details/<%= todo.id %>">
-                <button type="submit">詳細</button>
+    <div class="container">
+        <!-- 左側のタスクバー -->
+        <aside class="sidebar">
+            <p>ログイン中: <%= username %></p> <!-- ユーザー名を表示 -->
+            <ul>
+                <li>
+                    <form action="/logout" method="GET">
+                        <button type="submit">ログアウト</button>
+                    </form>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <h1>TODOアプリ for ts&mysql</h1>
+
+            <!-- 並び替えボタン -->
+            <div class="sort-buttons">
+                <form action="/home" method="GET">
+                    <input type="hidden" name="sort" value="priority">
+                    <button type="submit">重要度順</button>
+                </form>
+                <form action="/home" method="GET">
+                    <input type="hidden" name="sort" value="dueDate">
+                    <button type="submit">期限順</button>
+                </form>
+            </div>
+
+            <form action="/add" method="POST">
+                <input type="text" name="todo" placeholder="タスクの追加" required>
+                <input type="date" name="dueDate" placeholder="期限" required>
+                <select name="priority" required>
+                    <option value="low">重要度：low</option>
+                    <option value="medium">重要度：medium</option>
+                    <option value="high">重要度：high</option>
+                </select>
+                <button type="submit">Todoを追加する</button>
             </form>
-        </div>
-    <% } %>
+
+            <% for(let todo of todos) { %>
+                <div class="todo-item">
+                    <p><%= todo.todo %></p>
+                    <p>期限: <%= todo.dueDate ? String(todo.dueDate).slice(0, 10).replace(/-/g, '') : '未設定' %></p>
+                    
+                    <form method="POST" action="/details/<%= todo.id %>">
+                        <button type="submit">詳細</button>
+                    </form>
+                </div>
+            <% } %>
+        </main>
+    </div>
 </body>
 </html>

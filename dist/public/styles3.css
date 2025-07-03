@@ -1,0 +1,124 @@
+/* 全体のスタイル */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+    background-size: 300% 300%;
+    animation: gradient-shift 10s ease infinite;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #ffffff;
+    flex-direction: column; /* 縦方向に整列 */
+}
+
+/* 背景アニメーション */
+@keyframes gradient-shift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* 見出しのスタイル */
+h1 {
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    text-shadow: 0 0 10px #000000, 0 0 20px #4a90e2;
+    animation: glow 2s alternate infinite;
+}
+
+/* 見出しの光るアニメーション */
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 10px #4a90e2, 0 0 20px #50e3c2;
+    }
+    100% {
+        text-shadow: 0 0 20px #007aff, 0 0 40px #50e3c2;
+    }
+}
+
+/* フォームのスタイル */
+form {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 20px 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    flex-direction: column; /* フォーム内の要素を縦に整列 */
+    align-items: center;
+}
+
+/* ラベルと入力フィールドのスタイル */
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #ffffff;
+    width: 100%;
+    max-width: 350px;
+    text-align: left;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    width: 100%;
+    max-width: 350px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    border-color: #4a90e2;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ボタンのスタイル */
+button {
+    width: 100%;
+    max-width: 350px;
+    padding: 10px;
+    background: linear-gradient(135deg, #007aff, #50e3c2);
+    border: none;
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
+}
+
+button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* フォーム間のスペース */
+form + form {
+    margin-top: 20px;
+}
