@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/styles2.css">
+</head>
+<body>
+    <h1 class="details-title">Todo Details</h1>
+    <p class="details-task"><strong>Task:</strong> <%= todo.todo %></p>
+    <p class="details-id"><strong>ID:</strong> <%= todo.id %></p>
+    <p class="details-due-date"><strong>Due Date:</strong> <%= todo.dueDate ? String(todo.dueDate).slice(0, 10) : 'Not Set' %></p>
+    <p class="details-priority"><strong>Priority:</strong> <%= todo.priority %></p>
+    <a class="details-back-link" href="/home">Back to Home</a>
+    <form method="POST" action="/delete/<%= todo.id %>?_method=DELETE">
+        <button type="submit">Delete</button>
+    </form>
+
+    <form method="POST" action="/update/<%= todo.id %>?_method=PUT">
+        <input type="text" name="todo" value="<%= todo.todo %>" required>
+        <input type="date" name="dueDate" value="<%= todo.dueDate ? String(todo.dueDate).slice(0, 10) : '' %>" required>
+        <select name="priority" required>
+            <option value="low" <%= todo.priority === 'low' ? 'selected' : '' %>>Low</option>
+            <option value="medium" <%= todo.priority === 'medium' ? 'selected' : '' %>>Medium</option>
+            <option value="high" <%= todo.priority === 'high' ? 'selected' : '' %>>High</option>
+        </select>
+        <button type="submit">Update</button>
+    </form>
+</body>
+</html>

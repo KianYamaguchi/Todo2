@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>todoリスト</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+    <h1>TODOアプリ for ts&mysql</h1>
+    <form action="/add" method="POST">
+        <input type="text" name="todo" placeholder="タスクの追加" required>
+        <input type="date" name="dueDate" placeholder="期限" required>
+        <select name="priority" required>
+            <option value="low">重要度：low</option>
+            <option value="medium">重要度：medium</option>
+            <option value="high">重要度：high</option>
+        </select>
+        <button type="submit">Todoを追加する</button>
+    </form>
+    <% for(let todo of todos) { %>
+        <div class="todo-item">
+            <p><%= todo.todo %></p>
+            <p>期限: <%= todo.dueDate ? String(todo.dueDate).slice(0, 10).replace(/-/g, '') : '未設定' %></p>
+            
+            <form method="POST" action="/details/<%= todo.id %>">
+                <button type="submit">詳細</button>
+            </form>
+        </div>
+    <% } %>
+</body>
+</html>
