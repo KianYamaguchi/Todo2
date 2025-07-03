@@ -1,0 +1,80 @@
+import express from 'express';
+import path from 'path';
+import { v4 as uuid } from 'uuid';
+import methodOverride from 'method-override';
+import session from 'express-session';
+import mysql from 'mysql2/promise';
+import bcrypt from 'bcrypt';
+
+async function initializeApp() {
+    const db = await mysql.createConnection({
+        host: 'localhost', // MySQLサーバーのホスト名
+        user: 'root',      // MySQLユーザー名
+        password: 'root',  // MySQLパスワード
+        database: 'todos'  // 使用するデータベース名
+    });
+
+    console.log('Connected to MySQL database');
+
+    const app = express();
+
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    app.use(methodOverride('_method'));
+    app.use(express.static(path.join(__dirname, 'dist/public')));
+    app.use(session({
+    secret: 'your-secret-key', // セッションの暗号化キー
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false } // HTTPSを使用する場合はtrueに設定
+}));
+
+    app.set('view engine', 'ejs');
+    app.set('views', path.join(__dirname, 'dist/views'));
+
+
+
+    app.get('/',(req, res) => {
+        res.send('Hello, World!')
+    });
+    app.delete('/delete/:id', async (req, res) => {
+        const todoId = req.params.id;
+        await db.execute('DELETE FROM todos WHERE id = ?', [todoId]);
+        res.redirect('/home');
+    });
+
+
+    app.post('/add', async (req, res) => {
+        const { todo, dueDate, priority } = req.body;
+        await db.execute('INSERT INTO todos (todo, dueDate, priority) VALUES (?, ?, ?)', [todo, dueDate, priority]);
+        res.redirect('/home');
+    });
+
+
+    app.put('/update/:id', async (req, res) => {
+        const todoId = req.params.id;
+        const { todo, dueDate, priority } = req.body;
+        await db.execute('UPDATE todos SET todo = ?, dueDate = ?, priority = ? WHERE id = ?', [todo, dueDate, priority, todoId]);
+        res.redirect('/home');
+    });
+
+    app.get('/home', async (req, res) => {
+        const [rows] = await db.execute('SELECT * FROM todos');
+        console.log('Rendering home page');
+        res.render('home', { todos: rows });
+    });
+    app.post('/details/:id', async (req, res) => {
+    const todoId = req.params.id;
+    const [rows]: any = await db.query('SELECT * FROM todos WHERE id = ?', [todoId]);
+    if (rows.length > 0) {
+        res.render('details', { todo: rows[0] });
+    } else {
+        res.status(404).send('Todo not found');
+    }
+});
+    app.listen(3000, () => {
+        console.log('Server is running on port 3000');
+    });
+}
+
+initializeApp();

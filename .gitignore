@@ -1,0 +1,25 @@
+# Node.js dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+logs/
+
+# Build artifacts (excluding public and views in dist)
+dist/
+!dist/public/
+!dist/views/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor-specific files
+.vscode/
+
+# Temporary files
+*.tmp
+*.swp
