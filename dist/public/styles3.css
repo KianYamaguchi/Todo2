@@ -1,7 +1,7 @@
 /* 全体のスタイル */
 body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+    background: linear-gradient(45deg, #a6f0f0, #86f0e2, #77f7b7, #76f076);
     background-size: 300% 300%;
     animation: gradient-shift 10s ease infinite;
     margin: 0;
