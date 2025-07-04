@@ -5,6 +5,8 @@ import methodOverride from 'method-override';
 import session from 'express-session';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcrypt';
+import https from 'https';
+import fs from 'fs';
 declare module 'express-session' {
     interface SessionData {
         userId: string; // userIdプロパティを追加
@@ -34,10 +36,15 @@ async function initializeApp() {
     secret: 'your-secret-key', // セッションの暗号化キー
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false } // HTTPSを使用する場合はtrueに設定
+    cookie: { secure: true } // HTTPSを使用する場合はtrueに設定
 }));
-
-
+const httpsServer = https.createServer(
+        {
+            key: fs.readFileSync('server.key'), // 秘密鍵ファイル
+            cert: fs.readFileSync('server.cert') // 証明書ファイル
+        },
+        app
+    );
 
     app.set('view engine', 'ejs');
     app.set('views', path.join(__dirname, 'dist/views'));
@@ -141,8 +148,8 @@ async function initializeApp() {
             res.redirect('/login'); // ログアウト後にログインページへリダイレクト
         });
     });
-    app.listen(3000, () => {
-        console.log('Server is running on port 3000');
+    httpsServer.listen(3443, () => {
+        console.log('Server is running on port 3443');
     });
 }
 

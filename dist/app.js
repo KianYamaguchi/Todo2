@@ -9,6 +9,8 @@ const method_override_1 = __importDefault(require("method-override"));
 const express_session_1 = __importDefault(require("express-session"));
 const promise_1 = __importDefault(require("mysql2/promise"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const https_1 = __importDefault(require("https"));
+const fs_1 = __importDefault(require("fs"));
 async function initializeApp() {
     const db = await promise_1.default.createConnection({
         host: 'localhost', // MySQLサーバーのホスト名
@@ -27,8 +29,12 @@ async function initializeApp() {
         secret: 'your-secret-key', // セッションの暗号化キー
         resave: false,
         saveUninitialized: false,
-        cookie: { secure: false } // HTTPSを使用する場合はtrueに設定
+        cookie: { secure: true } // HTTPSを使用する場合はtrueに設定
     }));
+    const httpsServer = https_1.default.createServer({
+        key: fs_1.default.readFileSync('server.key'), // 秘密鍵ファイル
+        cert: fs_1.default.readFileSync('server.cert') // 証明書ファイル
+    }, app);
     app.set('view engine', 'ejs');
     app.set('views', path_1.default.join(__dirname, 'dist/views'));
     app.get('/', (req, res) => {
@@ -116,8 +122,8 @@ async function initializeApp() {
             res.redirect('/login'); // ログアウト後にログインページへリダイレクト
         });
     });
-    app.listen(3000, () => {
-        console.log('Server is running on port 3000');
+    httpsServer.listen(3443, () => {
+        console.log('Server is running on port 3443');
     });
 }
 initializeApp();
