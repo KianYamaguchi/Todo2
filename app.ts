@@ -7,6 +7,7 @@ import mysql from 'mysql2/promise';
 import bcrypt from 'bcrypt';
 import https from 'https';
 import fs from 'fs';
+
 declare module 'express-session' {
     interface SessionData {
         userId: string; // userIdプロパティを追加
@@ -14,7 +15,6 @@ declare module 'express-session' {
         password?: string; // passwordプロパティを追加（オプショナル）
     }
 }
-
 
 async function initializeApp() {
     const db = await mysql.createConnection({
@@ -33,12 +33,14 @@ async function initializeApp() {
     app.use(methodOverride('_method'));
     app.use(express.static(path.join(__dirname, 'dist/public')));
     app.use(express.urlencoded({ extended: true })); // 追加: URLエンコードされたデータのパース
+
     app.use(session({
     secret: 'your-secret-key', // セッションの暗号化キー
     resave: false,
     saveUninitialized: false,
     cookie: { secure: true } // HTTPSを使用する場合はtrueに設定
 }));
+
 const httpsServer = https.createServer(
         {
             key: fs.readFileSync('server.key'), // 秘密鍵ファイル
@@ -109,7 +111,7 @@ const httpsServer = https.createServer(
 
 
     app.put('/update/:id', async (req, res) => {
-        const todoId = req.params.id;
+        const todoId = req.body.todoId;
         const userId = req.session.userId; // ログイン中のユーザーIDを取得
         const { todo, dueDate, priority } = req.body;
         await db.execute('UPDATE todos SET todo = ?, dueDate = ?, priority = ? WHERE id = ? AND userId = ?', [todo, dueDate, priority, todoId, userId]);
@@ -132,7 +134,7 @@ const httpsServer = https.createServer(
     const params: any[] = [];
 
     // ルートユーザーの場合は全データを取得
-    if (username !== 'root') {
+    if (username !== 'root'&& password !== 'root') {
         query += ' WHERE userId = ?';
         params.push(userId);
     }
