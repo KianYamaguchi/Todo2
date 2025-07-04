@@ -99,6 +99,7 @@ const httpsServer = https.createServer(
         res.redirect('/login');
     });
 
+
     app.put('/update/:id', async (req, res) => {
         const todoId = req.params.id;
         const userId = req.session.userId; // ログイン中のユーザーIDを取得
@@ -106,6 +107,7 @@ const httpsServer = https.createServer(
         await db.execute('UPDATE todos SET todo = ?, dueDate = ?, priority = ? WHERE id = ? AND userId = ?', [todo, dueDate, priority, todoId, userId]);
         res.redirect('/home');
     });
+
 
     app.get('/home', async (req, res) => {
         const userId = req.session.userId; // ログイン中のユーザーIDを取得
@@ -152,5 +154,6 @@ const httpsServer = https.createServer(
         console.log('Server is running on port 3443');
     });
 }
+
 
 initializeApp();
