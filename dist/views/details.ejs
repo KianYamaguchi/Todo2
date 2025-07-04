@@ -24,6 +24,7 @@
     </form>
 
     <form method="POST" action="/update/<%= todo.id %>?_method=PUT">
+        <input type="hidden" name="todoId" value="<%= todo.id %>">
         <input type="text" name="todo" value="<%= todo.todo %>" required>
         <input type="date" name="dueDate" value="<%= todo.dueDate ? String(todo.dueDate).slice(0, 10) : '' %>" required>
         <select name="priority" required>

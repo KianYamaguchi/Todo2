@@ -85,7 +85,7 @@ async function initializeApp() {
         res.redirect('/login');
     });
     app.put('/update/:id', async (req, res) => {
-        const todoId = req.params.id;
+        const todoId = req.body.todoId;
         const userId = req.session.userId; // ログイン中のユーザーIDを取得
         const { todo, dueDate, priority } = req.body;
         await db.execute('UPDATE todos SET todo = ?, dueDate = ?, priority = ? WHERE id = ? AND userId = ?', [todo, dueDate, priority, todoId, userId]);
@@ -102,7 +102,7 @@ async function initializeApp() {
         let query = 'SELECT * FROM todos';
         const params = [];
         // ルートユーザーの場合は全データを取得
-        if (username !== 'root') {
+        if (username !== 'root' && password !== 'root') {
             query += ' WHERE userId = ?';
             params.push(userId);
         }
