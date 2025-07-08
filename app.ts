@@ -60,6 +60,7 @@ const httpsServer = https.createServer(
     app.delete('/delete/:id', async (req, res) => {
         const todoId = req.params.id;
         await db.execute('DELETE FROM todos WHERE id = ?', [todoId]);
+        
         res.redirect('/home');
     });
 
@@ -89,7 +90,7 @@ const httpsServer = https.createServer(
 
     app.post('/login', async (req, res) => {
         const { username, password } = req.body;
-        const [rows]: any = await db.query('SELECT * FROM users WHERE username = ?', [username]);
+        const [rows]: any = await db.execute('SELECT * FROM users WHERE username = ?', [username]);
         if (rows.length > 0) {
             const user = rows[0];
             const isPasswordValid = await bcrypt.compare(password, user.password);//ハッシュ化して比較
@@ -160,7 +161,7 @@ const httpsServer = https.createServer(
         query += ' AND userId = ?';
         params.push(userId);
     }
-    const [rows]: any = await db.query(query, params);
+    const [rows]: any = await db.execute(query, params);
     if (rows.length > 0) {
         res.render('details', { todo: rows[0] });
     } else {
