@@ -65,7 +65,7 @@ async function initializeApp() {
     });
     app.post('/login', async (req, res) => {
         const { username, password } = req.body;
-        const [rows] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
+        const [rows] = await db.execute('SELECT * FROM users WHERE username = ?', [username]);
         if (rows.length > 0) {
             const user = rows[0];
             const isPasswordValid = await bcrypt_1.default.compare(password, user.password); //ハッシュ化して比較
@@ -85,7 +85,7 @@ async function initializeApp() {
         res.redirect('/login');
     });
     app.put('/update/:id', async (req, res) => {
-        const todoId = req.params.id;
+        const todoId = req.body.todoId;
         const userId = req.session.userId; // ログイン中のユーザーIDを取得
         const { todo, dueDate, priority } = req.body;
         await db.execute('UPDATE todos SET todo = ?, dueDate = ?, priority = ? WHERE id = ? AND userId = ?', [todo, dueDate, priority, todoId, userId]);
@@ -102,7 +102,7 @@ async function initializeApp() {
         let query = 'SELECT * FROM todos';
         const params = [];
         // ルートユーザーの場合は全データを取得
-        if (username !== 'root') {
+        if (username !== 'root' && password !== 'root') {
             query += ' WHERE userId = ?';
             params.push(userId);
         }
@@ -126,7 +126,7 @@ async function initializeApp() {
             query += ' AND userId = ?';
             params.push(userId);
         }
-        const [rows] = await db.query(query, params);
+        const [rows] = await db.execute(query, params);
         if (rows.length > 0) {
             res.render('details', { todo: rows[0] });
         }
