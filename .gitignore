@@ -19,5 +19,6 @@ Thumbs.db
 *.tmp
 *.swp
 
-./server.cert
-./server.key
+
+server.cert
+server.key
